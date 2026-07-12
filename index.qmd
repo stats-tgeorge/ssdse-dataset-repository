@@ -1,0 +1,134 @@
+---
+title: "Browse Datasets"
+page-layout: full
+---
+
+```{=html}
+<p>
+Datasets for statistics and data science tests, quizzes, and class activities, submitted by teachers.
+Sort or filter any column to narrow the list — just like the Google Sheet — then click a dataset name
+for its full page with a data explorer and download links.
+Have a dataset to share? <a href="https://amstat.jotform.com/team/education/ssdse-dataset-repository-submission">Submit it here</a>.
+</p>
+
+<p id="ds-count" class="text-muted"></p>
+
+<div id="master-table-wrap">
+  <table id="master-table" class="table table-striped table-hover" style="width:100%" data-quarto-disable-processing="true">
+    <thead>
+      <tr>
+        <th>Dataset</th>
+        <th>Description</th>
+        <th>Topics</th>
+        <th>File type</th>
+        <th>Cleanliness</th>
+        <th>Real / synthetic</th>
+        <th>Availability</th>
+        <th>Obs</th>
+        <th>Cat vars</th>
+        <th>Num vars</th>
+        <th>Submitted by</th>
+        <th>Date</th>
+      </tr>
+      <tr class="filter-row"></tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+</div>
+
+<script>
+// Columns that get a dropdown filter (low-cardinality) vs. a text filter.
+const SELECT_COLS = { 2: "topics", 3: "plain", 4: "plain", 5: "plain", 6: "plain" };
+const TEXT_COLS = [0, 1, 10];
+
+function esc(s) {
+  return String(s ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+}
+
+fetch("datasets.json")
+  .then(r => r.json())
+  .then(data => {
+    const rows = data.map(d => [
+      `<a class="ds-name" href="${esc(d.href)}">${esc(d.name)}</a>`,
+      `<span class="ds-desc">${esc(d.description)}</span>`,
+      (d.topics || []).map(t => `<span class="topic-badge">${esc(t)}</span>`).join(" "),
+      esc(d.file_type),
+      esc(d.clean),
+      esc(d.real_synthetic),
+      esc(d.availability),
+      esc(d.n_obs),
+      esc(d.n_cat),
+      esc(d.n_num),
+      esc(d.submitter),
+      esc(d.date)
+    ]);
+
+    document.getElementById("ds-count").textContent =
+      `${data.length} dataset${data.length === 1 ? "" : "s"} in the repository`;
+
+    // Build the filter row cells (match the real header cell count).
+    const nCols = document.querySelectorAll("#master-table thead tr:first-child th").length;
+    const filterRow = document.querySelector("#master-table thead tr.filter-row");
+    filterRow.innerHTML = "";
+    for (let i = 0; i < nCols; i++) filterRow.appendChild(document.createElement("th"));
+
+    const table = $("#master-table").DataTable({
+      data: rows,
+      order: [[11, "desc"]],
+      pageLength: 25,
+      lengthMenu: [10, 25, 50, 100],
+      autoWidth: false,
+      columnDefs: [
+        { targets: 1, className: "ds-desc" },
+        { targets: [7, 8, 9], className: "text-end" }
+      ],
+      orderCellsTop: true,
+      initComplete: function () {
+        const api = this.api();
+
+        api.columns().every(function (idx) {
+          const col = this;
+          const cell = filterRow.children[idx];
+
+          if (idx in SELECT_COLS) {
+            const select = document.createElement("select");
+            select.innerHTML = `<option value="">All</option>`;
+            const values = new Set();
+            col.data().each(v => {
+              if (SELECT_COLS[idx] === "topics") {
+                // strip badge markup, split multi-select topics
+                const tmp = document.createElement("div");
+                tmp.innerHTML = v;
+                tmp.querySelectorAll(".topic-badge").forEach(b => values.add(b.textContent.trim()));
+              } else if (v) {
+                values.add(String(v).trim());
+              }
+            });
+            [...values].sort((a, b) => a.localeCompare(b)).forEach(v => {
+              const o = document.createElement("option");
+              o.value = v; o.textContent = v;
+              select.appendChild(o);
+            });
+            select.addEventListener("change", () => {
+              const v = select.value;
+              col.search(v ? $.fn.dataTable.util.escapeRegex(v) : "", true, false).draw();
+            });
+            cell.appendChild(select);
+          } else if (TEXT_COLS.includes(idx)) {
+            const input = document.createElement("input");
+            input.type = "search";
+            input.placeholder = "Filter…";
+            input.addEventListener("keyup", () => col.search(input.value).draw());
+            cell.appendChild(input);
+          }
+        });
+      }
+    });
+  })
+  .catch(err => {
+    document.getElementById("ds-count").textContent =
+      "Could not load the dataset list. If you are previewing locally, run scripts/build.py first.";
+    console.error(err);
+  });
+</script>
+```

@@ -1,0 +1,29 @@
+---
+title: "About"
+---
+
+The SSDSE Dataset Repository collects datasets that statistics and data science teachers can use for
+tests, quizzes, and class activities. Datasets may be real, simulated, or synthetic, and each entry
+includes information submitted by the contributor: the source, how clean the data are, how widely
+available they are, the number of observations and variables, and the topics the data can be used to
+teach or assess.
+
+## How it works
+
+Teachers submit datasets through a [submission form](https://amstat.jotform.com/team/education/ssdse-dataset-repository-submission)
+maintained by the American Statistical Association. Submissions land in a
+[public Google Sheet](https://docs.google.com/spreadsheets/d/1tuCXok_y_zQpSDGssaypETf9lnB6nCh9XVoCiMaPCuc/edit?gid=591469695),
+and this site rebuilds itself automatically from that sheet, so new submissions appear here without
+any manual work.
+
+## Contributing
+
+Have a dataset you use in your teaching? [Submit it here](https://amstat.jotform.com/team/education/ssdse-dataset-repository-submission).
+You will be asked for a brief description, the data file (or a link to it), optional supplementary
+material such as a codebook, and information that helps other teachers decide whether the dataset
+fits their needs.
+
+## Questions
+
+Some contributors provided an email address and are willing to answer questions about their datasets;
+you will find contact information on individual dataset pages where available.

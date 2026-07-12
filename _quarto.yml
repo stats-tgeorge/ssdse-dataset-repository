@@ -1,0 +1,36 @@
+project:
+  type: website
+  output-dir: _site
+  resources:
+    - datasets.json
+
+website:
+  title: "SSDSE Dataset Repository"
+  description: "Teaching datasets for statistics and data science tests and quizzes, collected by the ASA Section on Statistics and Data Science Education."
+  favicon: assets/favicon.svg
+  navbar:
+    background: dark
+    search: true
+    left:
+      - href: index.qmd
+        text: Browse Datasets
+      - href: about.qmd
+        text: About
+    right:
+      - text: Submit a Dataset
+        href: https://amstat.jotform.com/team/education/ssdse-dataset-repository-submission
+      - text: Google Sheet
+        href: https://docs.google.com/spreadsheets/d/1tuCXok_y_zQpSDGssaypETf9lnB6nCh9XVoCiMaPCuc/edit?gid=591469695
+  page-footer:
+    center: |
+      SSDSE Dataset Repository — datasets for teaching and assessment in statistics and data science.
+      [Submit a dataset](https://amstat.jotform.com/team/education/ssdse-dataset-repository-submission)
+
+format:
+  html:
+    theme:
+      - cosmo
+      - custom.scss
+    toc: false
+    include-in-header: includes/head.html
+    link-external-newwindow: true
